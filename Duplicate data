@@ -1,0 +1,49 @@
+import csv
+
+def remove_duplicates(input_file, output_file, duplicate_file):
+    # Use a set to track unique rows and a list for duplicates
+    unique_rows = set()
+    duplicate_rows = []
+
+    try:
+        with open(input_file, 'r', newline='', encoding='utf-8') as csvfile:
+            reader = csv.reader(csvfile) # We got entire row number in reader
+
+            # Process rows
+            for row in reader:
+                row_tuple = tuple(row)  #\\immutable (their content cannot be changed), which makes them hashable
+                if row_tuple in unique_rows:
+                    duplicate_rows.append(row)  # Track duplicates \\append() method is used to add a single item to the end of a list[]
+                else:
+                    unique_rows.add(row_tuple)  # add() method is used to add a single item to a set()
+
+        # Write unique rows to the output file and print to terminal
+        #print("Unique records:")
+        with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(unique_rows)   #This  write multiple rows to a CSV file.
+            #print(unique_rows)
+
+        #print(duplicate_rows)
+        # Print duplicates to the terminal and also write the same output to the duplicate file
+        if duplicate_rows:
+            print("\nDuplicate records:")
+            with open(duplicate_file, 'w', newline='', encoding='utf-8') as csvfile:
+                for row in duplicate_rows:
+                    row_str = "".join(row)
+                    print(row_str)  # Print to terminal
+                    csvfile.write(row_str + '\n')  # Write to duplicate file \\Writes a single line (string) to the file and appends a newline character (\n) at the end.
+
+        else:
+            print("\nNo duplicate records found.")
+
+
+    except FileNotFoundError:
+        print(f"Error: File '{input_file}' not found.")
+
+if __name__ == "__main__":
+    input_csv = r"F:\Duplicat_Records\Input_CSV\CARDS.csv"  # Input file path
+    output_csv = r"F:\Duplicat_Records\OUTPUT_CSV\Result.csv"  # Output file path
+    duplicate_csv = r"F:\Duplicat_Records\duplicates\duplicates.csv"  # File for duplicates
+    
+    remove_duplicates(input_csv, output_csv, duplicate_csv)
