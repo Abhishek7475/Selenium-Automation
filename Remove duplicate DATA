@@ -1,0 +1,64 @@
+import csv
+from collections import defaultdict
+import time
+
+input_file = r"D:\AK\in_out\ALL.csv"
+output_file = r"D:\AK\in_out\out\out.csv"
+
+start_time = time.time()
+
+print("=" * 40)
+print("Processing started")
+print("=" * 40)
+
+# =========================
+# FIRST PASS: COUNT VALUES
+# =========================
+counts = defaultdict(int)
+total_input_records = 0
+
+with open(input_file, newline='', encoding="utf-8") as f:
+    reader = csv.reader(f)
+    for row in reader:
+        if not row:
+            continue
+        value = row[0].strip()
+        counts[value] += 1
+        total_input_records += 1
+
+print(f"Total input records : {total_input_records}")
+
+# =========================
+# SECOND PASS: WRITE UNIQUE
+# =========================
+rows_written = 0
+
+with open(input_file, newline='', encoding="utf-8") as fin, \
+     open(output_file, "w", newline='', encoding="utf-8") as fout:
+
+    reader = csv.reader(fin)
+    writer = csv.writer(fout)
+
+    for row in reader:
+        if not row:
+            continue
+        value = row[0].strip()
+
+        # keep only values that appear exactly once
+        if counts[value] == 1:
+            writer.writerow([value])
+            rows_written += 1
+
+rows_removed = total_input_records - rows_written
+
+print("=" * 40)
+print("Completed Successfully")
+print("=" * 40)
+print(f"Total input records : {total_input_records}")
+print(f"Rows written        : {rows_written}")
+print(f"Rows removed        : {rows_removed}")
+print(f"Output file         : {output_file}")
+
+print("=" * 40)
+print(f"Execution time      : {round(time.time() - start_time, 2)} seconds")
+print("=" * 40)
